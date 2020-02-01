@@ -5,7 +5,6 @@ import_types_from "base"
 import_types_from "aggregator"
 import_types_from "BroadcastTypes.hpp"
 import_types_from "transformer/TransformationStatus.hpp"
-import_types_from "TransformerStatus.hpp"
 import_types_from "TransformDefinition.hpp"
 using_library "transformer"
 
