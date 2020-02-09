@@ -33,6 +33,7 @@ protected:
 
     std::vector<std::string> get_all_tranforms_ids();
     std::string make_transform_id(const TransformDefinition& transform);
+    std::map<std::string,std::string> transform_id_to_name;
     bool is_registered(const TransformDefinition& transform);
     bool is_registered(const std::string& transform);
     bool do_register_transform(const TransformDefinition& transform);

@@ -85,10 +85,11 @@ bool TransformationMonitor::do_register_transform(const TransformDefinition& tra
 
     //Create output port
     std::string transform_id = make_transform_id(transform);
+    transform_id_to_name[transform_id] = transform.name;
     LOG_INFO("Adding port %s to component", transform_id.c_str());
     RTT::OutputPort<base::samples::RigidBodyState>* output_port =
             new RTT::OutputPort<base::samples::RigidBodyState>(transform_id);
-    ports()->addPort(transform_id, *output_port);
+    ports()->addPort(transform_id_to_name[transform_id], *output_port);
 
     //Store
     port_map_[transform_id] = output_port;
@@ -134,6 +135,10 @@ bool TransformationMonitor::do_deregister_transform(const std::string& transform
     s_it = transformer_status_map_.find(transform_id);
     transformer_status_map_.erase(s_it);
 
+    std::map<std::string,std::string>::iterator n_it;
+    n_it = transform_id_to_name.find(transform_id);
+    transform_id_to_name.erase(n_it);
+
     rc = pthread_mutex_unlock(&callback_lock);
     return true;
 }
@@ -157,7 +162,7 @@ void TransformationMonitor::deregister_all_transforms(){
 std::string TransformationMonitor::register_transform(TransformDefinition const & the_argument)
 {
     bool st = do_register_transform(the_argument);
-    return make_transform_id(the_argument);
+    return transform_id_to_name[make_transform_id(the_argument)];
 }
 
 void TransformationMonitor::deregister_transform(TransformDefinition const & the_argument)

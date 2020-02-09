@@ -6,6 +6,7 @@ namespace transformer
 {
     struct TransformDefinition
     {
+        std::string name;
         std::string source_frame;
         std::string target_frame;
     };
