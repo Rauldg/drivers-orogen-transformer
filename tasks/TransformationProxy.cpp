@@ -34,6 +34,8 @@ bool TransformationProxy::startHook()
 {
     if (! TransformationProxyBase::startHook())
         return false;
+    last_forwarded = base::Time::now();
+    count = 0;
     return true;
 }
 void TransformationProxy::updateHook()
@@ -42,7 +44,29 @@ void TransformationProxy::updateHook()
 
     base::samples::RigidBodyState sample;
     while(_input.read(sample) == RTT::NewData){
-        _output.write(sample);
+        switch(_policy.get().policy){
+        case SINGLE_SHOT:
+            if(count < 1){
+                _output.write(sample);
+                count++;
+            }
+            break;
+        case DOWNSAMPLE_BY_TIME:
+            if((base::Time::now()-last_forwarded).toSeconds() > _policy.get().arg){
+                _output.write(sample);
+                last_forwarded = base::Time::now();
+            }
+            break;
+        case DOWNSAMPLE_BY_NSAMPLE:
+            if(count >= _policy.get().arg){
+                _output.write(sample);
+                count = 0;
+            }
+            break;
+        case REDIRECT_ALL:
+            _output.write(sample);
+            break;
+        }
     }
 }
 void TransformationProxy::errorHook()

@@ -4,6 +4,7 @@
 #define TRANSFORMER_TRANSFORMATIONPROXY_TASK_HPP
 
 #include "transformer/TransformationProxyBase.hpp"
+#include <base/Time.hpp>
 
 namespace transformer {
 
@@ -11,7 +12,8 @@ namespace transformer {
     {
 	friend class TransformationProxyBase;
     protected:
-
+        int count;
+        base::Time last_forwarded;
 
 
     public:

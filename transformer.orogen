@@ -6,6 +6,7 @@ import_types_from "aggregator"
 import_types_from "BroadcastTypes.hpp"
 import_types_from "transformer/TransformationStatus.hpp"
 import_types_from "TransformDefinition.hpp"
+import_types_from "ForwardingPolicy.hpp"
 using_library "transformer"
 
 typekit do
@@ -16,6 +17,7 @@ typekit do
     export_types '/transformer/TransformerStatus'
     export_types '/transformer/TransformationDescription'
     export_types '/std/vector</transformer/TransformationDescription>'
+    export_types '/transformer/ForwardingPolicy'
 end	
 
 # Task that allows to broadcast transformer information, mostly used for GUI
@@ -64,6 +66,7 @@ task_context "TransformationMonitor" do
 end
 
 task_context "TransformationProxy" do
+    property("policy", "transformer/ForwardingPolicyConfig")
     input_port "input", "/base/samples/RigidBodyState"
     output_port "output", "/base/samples/RigidBodyState"
 
