@@ -9,6 +9,9 @@ import_types_from "TransformDefinition.hpp"
 import_types_from "ForwardingPolicy.hpp"
 using_library "transformer"
 
+using_library "ctrl_types"
+import_types_from "ctrl_types/CartesianState.hpp"
+
 typekit do
     # This one is actually for the transformer plugin, but we want to avoid
     # adding a new package just for that
@@ -68,6 +71,20 @@ end
 task_context "TransformationProxy" do
     property("policy", "transformer/ForwardingPolicyConfig")
     input_port "input", "/base/samples/RigidBodyState"
+    output_port "output", "/base/samples/RigidBodyState"
+
+    port_driven 'input'
+end
+
+task_context "RBSToCSConverter" do
+    input_port "input", "/base/samples/RigidBodyState"
+    output_port "output", "/base/samples/CartesianState"
+
+    port_driven 'input'
+end
+
+task_context "CSToRBSConverter" do
+    input_port "input", "/base/samples/CartesianState"
     output_port "output", "/base/samples/RigidBodyState"
 
     port_driven 'input'
