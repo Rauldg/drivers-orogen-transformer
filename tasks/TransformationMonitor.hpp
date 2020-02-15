@@ -13,7 +13,6 @@ class TransformationMonitor : public TransformationMonitorBase
 protected:
     //Usually done by orogen
     Transformer _transformer;
-    transformer::TransformerStatus transformerStatus;
     base::Time _nextStatusTime;
     //End of orogen part
 
@@ -21,15 +20,12 @@ protected:
     typedef std::map<std::string, RTT::OutputPort<base::samples::RigidBodyState>* >::iterator PortMapIterator;
     typedef std::map<std::string, Transformation*> TransformationMap;
     typedef std::map<std::string, Transformation*>::iterator TransformationMapIterator;
-    typedef std::map<std::string, TransformationStatus> TransformerStatusMap;
-    typedef std::map<std::string, TransformationStatus>::iterator TransformerStatusMapIterator;
 
     //FIXME: Is this mutex really necessary?
     pthread_mutex_t callback_lock;
 
     PortMap port_map_;
     TransformationMap transformations_map_;
-    TransformerStatusMap transformer_status_map_;
 
     std::vector<std::string> get_all_tranforms_ids();
     std::string make_transform_id(const TransformDefinition& transform);

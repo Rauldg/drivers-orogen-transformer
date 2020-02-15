@@ -135,10 +135,6 @@ bool TransformationMonitor::do_deregister_transform(const std::string& transform
     t_it = transformations_map_.find(transform_id);
     transformations_map_.erase(t_it);
 
-    TransformerStatusMapIterator s_it;
-    s_it = transformer_status_map_.find(transform_id);
-    transformer_status_map_.erase(s_it);
-
     std::map<std::string,std::string>::iterator n_it;
     n_it = transform_id_to_name.find(transform_id);
     transform_id_to_name.erase(n_it);
@@ -188,20 +184,18 @@ bool TransformationMonitor::configureHook()
     _transformer.clear();
     _transformer.setTimeout( base::Time::fromSeconds( _transformer_max_latency.value()) );
 
-    transformerStatus.transformations.clear();
-
     std::vector<base::samples::RigidBodyState> const& staticTransforms =
             _static_transformations.set();
     for (size_t i = 0; i < staticTransforms.size(); ++i)
         _transformer.pushStaticTransformation(staticTransforms[i]);
 
-    transformerStatus.transformations.resize(1);
     //end of orogen part
 
     std::vector<TransformDefinition> transforms = _transforms.get();
     for(size_t i=0; i<transforms.size(); i++){
         do_register_transform(transforms[i]);
     }
+
     return true;
 }
 bool TransformationMonitor::startHook()
@@ -214,16 +208,8 @@ bool TransformationMonitor::startHook()
 
 void TransformationMonitor::updateTransformerStatus()
 {
-    transformerStatus.transformations.resize(transformations_map_.size());
-    int i=0;
-    for(TransformationMapIterator it = transformations_map_.begin();
-        it != transformations_map_.end(); ++it){
-        std::string t_id = it->first;
-        it->second->updateStatus(transformer_status_map_[t_id]);
-        transformerStatus.transformations[i] = transformer_status_map_[t_id];
-    }
-    transformerStatus.time = base::Time::now();
-    _transformer_status.write(transformerStatus);
+    transformer::TransformerStatus status = _transformer.getTransformerStatus();
+    _transformer_status.write(status);
 }
 
 
