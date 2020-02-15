@@ -53,7 +53,11 @@ void TransformationMonitor::callback(const base::Time& time, const Transformatio
 
     base::samples::RigidBodyState rbs;
     transformation.get(time, rbs);
-    port_map_[tr_id]->write(rbs);
+    if(rbs.hasValidPosition() && rbs.hasValidOrientation()){
+        port_map_[tr_id]->write(rbs);
+    }else{
+        LOG_ERROR_S << "Will not write ransform " << tr_id << ", because it is invalid.";
+    }
     rc = pthread_mutex_unlock(&callback_lock);
 }
 
